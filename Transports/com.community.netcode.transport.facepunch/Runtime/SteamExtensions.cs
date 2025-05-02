@@ -29,7 +29,7 @@ namespace Steamworks
 
             // Call the ActivateGameOverlayToStore method
             var activateGameOverlayToStoreMethod = internalType.GetMethod("ActivateGameOverlayToStore",
-                BindingFlags.Public | BindingFlags.Instance);
+                BindingFlags.NonPublic | BindingFlags.Instance);
             activateGameOverlayToStoreMethod.Invoke(internalValue, new[] {(AppId) id.Value, flag});
         }
     }
