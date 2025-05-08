@@ -1,5 +1,5 @@
-using System;
 using System.Reflection;
+using Steamworks.Ugc;
 
 namespace Steamworks
 {
@@ -12,25 +12,32 @@ namespace Steamworks
             AddToCartAndShow
         }
 
-
-        public static void OpenStoreOverlay(AppId id, OverlayToStoreFlag overlayToStoreFlag)
+        private static object Invoke<T>(string methodName, params object[] parameters)
         {
-            // Get SteamFriends.Internal
-            var clientClassType = typeof(SteamFriends);
+            var classType = typeof(T);
             var internalProperty =
-                clientClassType.GetProperty("Internal", BindingFlags.NonPublic | BindingFlags.Static);
+                classType.GetProperty("Internal", BindingFlags.NonPublic | BindingFlags.Static);
             var internalValue = internalProperty.GetValue(null);
             var internalType = internalValue.GetType();
 
-            // Get the OverlayToStoreFlag
-            var overlayToStoreFlagType = internalType.Assembly.GetType("Steamworks.OverlayToStoreFlag");
-            var flagValue = (int) overlayToStoreFlag;
-            var flag = Enum.ToObject(overlayToStoreFlagType, flagValue);
-
-            // Call the ActivateGameOverlayToStore method
-            var activateGameOverlayToStoreMethod = internalType.GetMethod("ActivateGameOverlayToStore",
+            var method = internalType.GetMethod(methodName,
                 BindingFlags.NonPublic | BindingFlags.Instance);
-            activateGameOverlayToStoreMethod.Invoke(internalValue, new[] {(AppId) id.Value, flag});
+            return method.Invoke(internalValue, parameters);
+        }
+
+        public static void OpenStoreOverlay(AppId id, OverlayToStoreFlag overlayToStoreFlag)
+        {
+            Invoke<SteamFriends>("ActivateGameOverlayToStore", (AppId) id.Value, (int) overlayToStoreFlag);
+        }
+
+        public static void AddAppDependency(this Item item, AppId appId)
+        {
+            Invoke<SteamUGC>("AddAppDependency", item.Id, appId);
+        }
+
+        public static void RemoveAppDependency(this Item item, AppId appId)
+        {
+            Invoke<SteamUGC>("RemoveAppDependency", item.Id, appId);
         }
     }
 }
