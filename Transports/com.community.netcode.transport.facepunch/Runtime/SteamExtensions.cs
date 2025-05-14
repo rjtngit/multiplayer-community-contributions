@@ -39,5 +39,19 @@ namespace Steamworks
         {
             Invoke<SteamUGC>("RemoveAppDependency", item.Id, appId);
         }
+
+        public static Query ForAppId(this Query q, AppId app)
+        {
+            var field = typeof(Query).GetField("consumerApp", BindingFlags.Instance | BindingFlags.NonPublic);
+            field.SetValueDirect(__makeref(q), app);
+            return q;
+        }
+
+        public static Query WithCreatorAppId(this Query q, AppId app)
+        {
+            var field = typeof(Query).GetField("creatorApp", BindingFlags.Instance | BindingFlags.NonPublic);
+            field.SetValueDirect(__makeref(q), app);
+            return q;
+        }
     }
 }
