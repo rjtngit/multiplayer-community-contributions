@@ -374,7 +374,7 @@ namespace Netcode.Transports.Facepunch
             return new SteamId();
         }
 
-        public SteamId GetSteamIdForAccount(ulong accountId)
+        public SteamId GetSteamIdForAccount(uint accountId)
         {
             if (accountId == SteamClient.SteamId.AccountId)
             {
