@@ -12,6 +12,14 @@ namespace Steamworks
             AddToCartAndShow
         }
 
+        public enum TextFilteringContext
+        {
+            Unknown,
+            GameContent,
+            Chat,
+            Name
+        }
+
         private static object Invoke<T>(string methodName, params object[] parameters)
         {
             var classType = typeof(T);
@@ -66,7 +74,7 @@ namespace Steamworks
             string inputMessage)
         {
             var pchOutFilteredText = "";
-            Invoke<SteamUtils>("FilterText", context, sourceSteamID, inputMessage, pchOutFilteredText);
+            Invoke<SteamUtils>("FilterText", (int) context, sourceSteamID, inputMessage, pchOutFilteredText);
             return pchOutFilteredText;
         }
     }
