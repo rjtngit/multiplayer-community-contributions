@@ -53,5 +53,21 @@ namespace Steamworks
             field.SetValueDirect(__makeref(q), app);
             return q;
         }
+
+
+        public static bool InitFilterText()
+        {
+            return (bool) Invoke<SteamUtils>("InitFilterText", 0U);
+        }
+
+        public static string FilterText(
+            TextFilteringContext context,
+            SteamId sourceSteamID,
+            string inputMessage)
+        {
+            var pchOutFilteredText = "";
+            Invoke<SteamUtils>("FilterText", context, sourceSteamID, inputMessage, pchOutFilteredText);
+            return pchOutFilteredText;
+        }
     }
 }
