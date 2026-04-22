@@ -12,14 +12,6 @@ namespace Steamworks
             AddToCartAndShow
         }
 
-        public enum TextFilteringContext
-        {
-            Unknown,
-            GameContent,
-            Chat,
-            Name
-        }
-
         private static object Invoke<T>(string methodName, params object[] parameters)
         {
             var classType = typeof(T);
@@ -60,22 +52,6 @@ namespace Steamworks
             var field = typeof(Query).GetField("creatorApp", BindingFlags.Instance | BindingFlags.NonPublic);
             field.SetValueDirect(__makeref(q), app);
             return q;
-        }
-
-
-        public static bool InitFilterText()
-        {
-            return (bool) Invoke<SteamUtils>("InitFilterText", 0U);
-        }
-
-        public static string FilterText(
-            TextFilteringContext context,
-            SteamId sourceSteamID,
-            string inputMessage)
-        {
-            var pchOutFilteredText = "";
-            Invoke<SteamUtils>("FilterText", (int) context, sourceSteamID, inputMessage, pchOutFilteredText);
-            return pchOutFilteredText;
         }
     }
 }
