@@ -156,6 +156,16 @@ namespace Netcode.Transports.Facepunch
 
         public override ulong GetCurrentRtt(ulong clientId)
         {
+            if (inConnections.TryGetValue(clientId, out var client))
+            {
+                return (ulong) client.connection.QuickStatus().Ping;
+            }
+
+            if (outConnections.TryGetValue(clientId, out var transport))
+            {
+                return (ulong) transport.Connection.QuickStatus().Ping;
+            }
+
             return 0;
         }
 
