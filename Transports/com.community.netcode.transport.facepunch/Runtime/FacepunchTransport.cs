@@ -452,7 +452,7 @@ namespace Netcode.Transports.Facepunch
             {
                 if (steamId == transport.Value?.steamId)
                 {
-                    return "Connected";
+                    return transport.Value.connection.QuickStatus().State.ToString();
                 }
             }
 
