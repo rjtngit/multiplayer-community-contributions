@@ -458,6 +458,23 @@ namespace Netcode.Transports.Facepunch
             return "NoConnection";
         }
 
+        public (float local, float remote) GetConnectionQuality(ulong clientId)
+        {
+            if (inConnections.TryGetValue(clientId, out var client))
+            {
+                var status = client.connection.QuickStatus();
+                return (status.ConnectionQualityLocal, status.ConnectionQualityRemote);
+            }
+
+            if (outConnections.TryGetValue(clientId, out var transport))
+            {
+                var status = transport.Connection.QuickStatus();
+                return (status.ConnectionQualityLocal, status.ConnectionQualityRemote);
+            }
+
+            return (-1, -1);
+        }
+
         #endregion
     }
 }
