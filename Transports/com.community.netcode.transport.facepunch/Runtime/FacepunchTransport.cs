@@ -109,45 +109,43 @@ namespace Netcode.Transports.Facepunch
 
         public override void DisconnectLocalClient()
         {
-            foreach (var connectionManager in outConnections.Values)
-            {
-                connectionManager.Connection.Close();
-            }
-
-            foreach (var client in inConnections.Values)
-            {
-                client.connection.Close();
-            }
-
             if (LogLevel <= LogLevel.Developer)
             {
                 Debug.Log($"[{nameof(FacepunchTransport)}] - Disconnecting local client.");
             }
+
+            Shutdown();
         }
 
         public override void DisconnectRemoteClient(ulong clientId)
         {
+            var dc = false;
+
             if (inConnections.TryGetValue(clientId, out var user))
             {
                 user.connection.Close();
                 inConnections.Remove(clientId);
+                dc = true;
 
                 if (LogLevel <= LogLevel.Developer)
                 {
                     Debug.Log($"[{nameof(FacepunchTransport)}] - Disconnecting remote client with ID {clientId}.");
                 }
             }
-            else if (outConnections.TryGetValue(clientId, out var host))
+
+            if (outConnections.TryGetValue(clientId, out var host))
             {
                 host.Connection.Close();
                 outConnections.Remove(clientId);
+                dc = true;
 
                 if (LogLevel <= LogLevel.Developer)
                 {
                     Debug.Log($"[{nameof(FacepunchTransport)}] - Disconnecting remote client with ID {clientId}.");
                 }
             }
-            else if (LogLevel <= LogLevel.Normal)
+
+            if (!dc && LogLevel <= LogLevel.Normal)
             {
                 Debug.LogWarning(
                     $"[{nameof(FacepunchTransport)}] - Failed to disconnect remote client with ID {clientId}, client not connected.");
@@ -321,6 +319,7 @@ namespace Netcode.Transports.Facepunch
         void ISocketManager.OnDisconnected(SocketConnection connection, ConnectionInfo info)
         {
             inConnections.Remove(connection.Id);
+            outConnections.Remove(connection.Id);
 
             InvokeOnTransportEvent(NetworkEvent.Disconnect, connection.Id, default, Time.realtimeSinceStartup);
 
