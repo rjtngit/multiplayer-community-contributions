@@ -472,7 +472,7 @@ namespace Netcode.Transports.Facepunch
                 return (status.ConnectionQualityLocal, status.ConnectionQualityRemote);
             }
 
-            return (-1, -1);
+            return (float.MinValue, float.MinValue);
         }
 
         #endregion
